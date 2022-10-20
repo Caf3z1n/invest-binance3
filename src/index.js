@@ -17,6 +17,8 @@ let orderProfit = 0
 let long = false
 let short = false
 
+let ultima_entrada = 0
+
 setInterval(async () => {
   const prices = await api.candles()
 
@@ -28,7 +30,7 @@ setInterval(async () => {
   
   const barra = data[data.length - 2]
 
-  if(!orderEntrada && !orderProfit && barra.rsi < long_rsi && data[data.length - 3].rsi >= long_rsi) {
+  if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi < long_rsi && data[data.length - 3].rsi >= long_rsi) {
     const leverageResponse = await api.leverage({ leverage })
 
     if(!leverageResponse) {
@@ -56,7 +58,9 @@ setInterval(async () => {
     
     long = true
     short = false
-  }else if(!orderEntrada && !orderProfit && barra.rsi > short_rsi && data[data.length - 3].rsi <= short_rsi) {
+
+    ultima_entrada = barra.open_time
+  }else if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi > short_rsi && data[data.length - 3].rsi <= short_rsi) {
     const leverageResponse = await api.leverage({ leverage })
 
     if(!leverageResponse) {
@@ -84,6 +88,8 @@ setInterval(async () => {
 
     long = false
     short = true
+
+    ultima_entrada = barra.open_time
   }
 
   if(long) {
