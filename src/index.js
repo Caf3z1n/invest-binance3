@@ -54,7 +54,7 @@ setInterval(async () => {
 
     console.log(`LONG: Order limit definido! ${new Date()}`)
     orderEntrada = responseOrder.orderId
-    linhaLimite = addMinutes(barra.open_time, 5 * limite_entrada)
+    linhaLimite = addMinutes(barra.open_time, 30 * limite_entrada)
     
     long = true
     short = false
@@ -84,7 +84,7 @@ setInterval(async () => {
 
     console.log(`SHORT: Order limit definido! ${new Date()}`)
     orderEntrada = responseOrder.orderId
-    linhaLimite = addMinutes(barra.open_time, 5 * limite_entrada)
+    linhaLimite = addMinutes(barra.open_time, 30 * limite_entrada)
 
     long = false
     short = true
