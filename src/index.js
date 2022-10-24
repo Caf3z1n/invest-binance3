@@ -30,7 +30,7 @@ setInterval(async () => {
   
   const barra = data[data.length - 2]
 
-  if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi < long_rsi && data[data.length - 3].rsi >= long_rsi) {
+  if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi < long_rsi /* && data[data.length - 3].rsi >= long_rsi */) {
     const leverageResponse = await api.leverage({ leverage })
 
     if(!leverageResponse) {
@@ -60,7 +60,7 @@ setInterval(async () => {
     short = false
 
     ultima_entrada = barra.open_time
-  }else if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi > short_rsi && data[data.length - 3].rsi <= short_rsi) {
+  }else if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi > short_rsi /* && data[data.length - 3].rsi <= short_rsi */) {
     const leverageResponse = await api.leverage({ leverage })
 
     if(!leverageResponse) {
