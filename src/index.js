@@ -30,7 +30,7 @@ setInterval(async () => {
   
   const barra = data[data.length - 2]
 
-  if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi < long_rsi /* && data[data.length - 3].rsi >= long_rsi */) {
+  if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi < long_rsi) {
     const leverageResponse = await api.leverage({ leverage })
 
     if(!leverageResponse) {
@@ -60,7 +60,7 @@ setInterval(async () => {
     short = false
 
     ultima_entrada = barra.open_time
-  }else if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi > short_rsi /* && data[data.length - 3].rsi <= short_rsi */) {
+  }else if(!orderEntrada && !orderProfit && ultima_entrada !== barra.open_time && barra.rsi > short_rsi && data[data.length - 3].rsi <= short_rsi) {
     const leverageResponse = await api.leverage({ leverage })
 
     if(!leverageResponse) {
@@ -109,7 +109,20 @@ setInterval(async () => {
         const responseOrderTake = await api.newOrderStopTakeMarket({ side: 'SELL', stopPrice, quantity })
 
         if(!responseOrderTake) {
-          return console.log('LONG: Erro ao criar ordem take profit!')
+          console.log('LONG: Erro ao criar ordem take profit!')
+          const orderMarket = await api.newOrderMarket({ side: 'SELL', quantity })
+
+          if(!orderMarket) {
+            return console.log('LONG: Erro ao criar ordem market!')
+          }
+
+          orderProfit = 0
+          orderEntrada = 0
+          linhaLimite = 0
+          short = false
+          long = false
+
+          return console.log('LONG: Order Market realizada!')
         }
   
         orderProfit = responseOrderTake.orderId
@@ -177,7 +190,20 @@ setInterval(async () => {
         const responseOrderTake = await api.newOrderStopTakeMarket({ side: 'BUY', stopPrice, quantity })
 
         if(!responseOrderTake) {
-          return console.log('SHORT: Erro ao criar ordem teke profit!')
+          console.log('SHORT: Erro ao criar ordem take profit!')
+          const orderMarket = await api.newOrderMarket({ side: 'BUY', quantity })
+
+          if(!orderMarket) {
+            return console.log('SHORT: Erro ao criar ordem market!')
+          }
+
+          orderProfit = 0
+          orderEntrada = 0
+          linhaLimite = 0
+          short = false
+          long = false
+
+          return console.log('SHORT: Order Market realizada!')
         }
   
         orderProfit = responseOrderTake.orderId
@@ -231,20 +257,19 @@ setInterval(async () => {
   }
 }, env.CRAWLER_INTERVAL);
 
+
 async function teste() {
-  const response = await api.newOrderStopTakeMarket({ side: 'SELL', quantity: '0.004', stopPrice: '1300' })
+  const response = await api.newOrderLimit({ side: 'BUY', quantity: '0.004', price: '1550' })
+
+  console.log(response)
+}
+
+async function teste2() {
+  const response = await api.newOrderMarket({ side: 'SELL', quantity: '0.004' })
 
   console.log(response)
 }
 
 //teste()
-
-async function teste2() {
-  //const response = await api.getOrder({ orderId: 8389765548478170000 }) FILLED OK
-  //const response = await api.getOrder({ orderId: 8389765548478344000 }) CANCELADO NÃO LISTA
-  const response = await api.getOrder({ orderId: 8389765548480886000 })
-
-  console.log(response)
-}
 
 //teste2()

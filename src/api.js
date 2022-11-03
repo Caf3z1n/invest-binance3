@@ -153,8 +153,20 @@ async function newOrderStopTakeMarket({ side, stopPrice, quantity }) {
   return privateCall('/v1/order', data, 'POST')
 }
 
+async function newOrderMarket({ side, quantity }) {
+  const data = {
+    symbol,
+    side,
+    quantity,
+    type: 'MARKET',
+    positionSide: 'BOTH',
+  }
+
+  return privateCall('/v1/order', data, 'POST')
+}
+
 async function cancelAllOrders() {
   return await privateCall('/v1/allOpenOrders', { symbol }, 'DELETE')
 }
 
-module.exports = { candles, leverage, balance, newOrderLimit, getOrder, newOrderStopTakeMarket, cancelAllOrders }
+module.exports = { candles, leverage, balance, newOrderLimit, getOrder, newOrderStopTakeMarket, cancelAllOrders, newOrderMarket }
